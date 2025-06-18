@@ -66,6 +66,21 @@
   #define CLK 22
   #define LAT 26
   #define OE 25
+#elif defined(PIXOTICKER_WIDE)
+    #define R1 2
+    #define G1 4
+    #define BL1 15
+    #define R2 16
+    #define G2 17
+    #define BL2 27
+    #define CH_A 5
+    #define CH_B 18
+    #define CH_C 19
+    #define CH_D 21
+    #define CH_E 12
+    #define CLK 22
+    #define LAT 26
+    #define OE 25
   #elif defined(MATRIXPORTALS3)
 //                     R1, G1, B1, R2, G2, B2
 // uint8_t rgbPins[] = {42, 41, 40, 38, 39, 37};
@@ -131,7 +146,7 @@ int display_initialize() {
   bool invert_clock_phase = true;
   #endif
 
-  #ifdef TRONBYT_S3_WIDE
+  #if  defined(TRONBYT_S3_WIDE)
   HUB75_I2S_CFG mxconfig(128,                     // width
                          64,                      // height
                          1,                       // chain length
@@ -142,6 +157,17 @@ int display_initialize() {
                          1,                       // latch blanking
                          invert_clock_phase       // invert clock phase
   );
+  #elif defined(PIXOTICKER_WIDE)
+   HUB75_I2S_CFG mxconfig(128,                     // width
+                           64,                      // height
+                           1,                       // chain length
+                           pins,                    // pin mapping
+                           HUB75_I2S_CFG::FM6126A,  // driver chip
+                           false,                    // double-buffering
+                           HUB75_I2S_CFG::HZ_10M,   // clock speed
+                           1,                       // latch blanking
+                           invert_clock_phase       // invert clock phase
+    );
   #else
   HUB75_I2S_CFG mxconfig(64,                      // width
                          32,                      // height
@@ -199,7 +225,7 @@ void display_shutdown() {
 void display_draw(const uint8_t *pix, int width, int height,
                  int channels, int ixR, int ixG, int ixB) {
   int scale = 1;
-  #ifdef TRONBYT_S3_WIDE
+  #if defined(TRONBYT_S3_WIDE) || defined(PIXOTICKER_WIDE)
   if (width == 64 && height == 32) {
     scale = 2; // Scale up to 128x64
   }
